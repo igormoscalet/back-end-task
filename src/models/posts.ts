@@ -6,17 +6,22 @@ export function setupPostsModel(modelName: string, sequelize: Sequelize): void {
   Post.init({
     id: {
       type: DataTypes.INTEGER,
+      primaryKey: true,
       allowNull: false,
+      autoIncrement: true,
+      unique: true
     },
     title: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     content: {
       type: DataTypes.TEXT,
       allowNull: false,
-      unique: true,
+    },
+    authorId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     isHidden: {
       type: DataTypes.BOOLEAN,

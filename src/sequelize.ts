@@ -2,7 +2,7 @@ import { Sequelize, Options } from 'sequelize';
 
 import type { UsersModel, PostsModel } from './repositories/types';
 
-import { setupUsersModel } from './models';
+import { setupUsersModel, setupPostsModel } from './models';
 
 const postsModelName = 'posts';
 const usersModelName = 'users';
@@ -13,6 +13,7 @@ export async function initSequelizeClient(params: SetupSequelizeParams): Promise
   const sequelizeClient = new Sequelize({ dialect, host, port, username, password, database, logging: false });
 
   setupUsersModel(usersModelName, sequelizeClient);
+  setupPostsModel(postsModelName, sequelizeClient);
 
   associateModels(sequelizeClient.models as unknown as SequelizeModels);
 

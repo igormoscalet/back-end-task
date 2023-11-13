@@ -10,6 +10,7 @@ export function setupUsersModel(modelName: string, sequelize: Sequelize): void {
       primaryKey: true,
       allowNull: false,
       autoIncrement: true,
+      unique: true
     },
     type: {
       type: DataTypes.ENUM,

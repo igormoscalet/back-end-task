@@ -1,15 +1,17 @@
 import { NotImplementedError } from "./errors";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { tokenSecret } from './dbconfig'
+import { tokenSecret, hashSalt } from './dbconfig'
 
 // TODO(roman): implement these
 // external libraries can be used
 // you can even ignore them and use your own preferred method
 
 export async function hashPassword(password: string): Promise<string> {
-  const salt = await bcrypt.genSalt(10);
-  const passwordHash = await bcrypt.hash(password, salt);
+  // const salt = await bcrypt.genSalt(10);
+  // same salt for password comparison
+  const passwordHash = await bcrypt.hash(password, hashSalt);
+  //console.log(passwordHash)
   return passwordHash;
 }
 

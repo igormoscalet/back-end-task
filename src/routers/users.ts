@@ -20,7 +20,7 @@ export function initUsersRouter(sequelizeClient: SequelizeClient): Router {
     .post(tokenValidation, adminValidation, initCreateUserRequestHandler(sequelizeClient));
 
   router.route('/login')
-    .post(tokenValidation, initLoginUserRequestHandler(sequelizeClient));
+    .post(initLoginUserRequestHandler(sequelizeClient));
   router.route('/register')
     .post(initRegisterUserRequestHandler(sequelizeClient));
 
@@ -55,9 +55,9 @@ function initCreateUserRequestHandler(sequelizeClient: SequelizeClient): Request
   return async function createUserRequestHandler(req, res, next): Promise<void> {
     try {
       // NOTE(roman): missing validation and cleaning
-      const { type, name, email, password } = req.body as CreateUserData;
+      const { name, email, password } = req.body as CreateUserData;
 
-      await createUser({ type, name, email, password }, sequelizeClient);
+      await createUser({ name, email, password }, sequelizeClient);
 
       return res.status(204).end();
     } catch (error) {
@@ -100,9 +100,11 @@ function initRegisterUserRequestHandler(sequelizeClient: SequelizeClient): Reque
   return async function createUserRequestHandler(req, res, next): Promise<void> {
     try {
       // NOTE(roman): missing validation and cleaning
-      const { name, email, password } = req.body as Omit<CreateUserData, 'type'>;
+      const { name, email, password } = req.body as CreateUserData;
 
-      await createUser({ type: UserType.BLOGGER, name, email, password }, sequelizeClient);
+      const hashedPassword = await hashPassword(password);
+
+      await createUser({ name, email, password: hashedPassword }, sequelizeClient);
 
       return res.status(204).end();
     } catch (error) {
@@ -112,7 +114,9 @@ function initRegisterUserRequestHandler(sequelizeClient: SequelizeClient): Reque
 }
 
 async function createUser(data: CreateUserData, sequelizeClient: SequelizeClient): Promise<void> {
-  const { type, name, email, password } = data;
+  const { name, email, password } = data;
+
+  const type = UserType.BLOGGER;
 
   const { models } = sequelizeClient;
 
@@ -138,4 +142,8 @@ async function createUser(data: CreateUserData, sequelizeClient: SequelizeClient
   await models.users.create({ type, name, email, passwordHash: password });
 }
 
-type CreateUserData = Pick<User, 'type' | 'name' | 'email'> & { password: User['passwordHash'] };
+type CreateUserData = {
+  name: string,
+  email: string, 
+  password: string
+}

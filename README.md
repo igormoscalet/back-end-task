@@ -1,19 +1,19 @@
 # THE TASK IS DONE! 
 ### Endpoints:
+<code>/api/v1/users/ - list users GET
+/api/v1/users/login - user login POST
+/api/v1/users/register - user registration POST 
+/api/v1/posts/create - create post POST
+/api/v1/posts/update/:id - update post (by id) POST
+/api/v1/posts/remove/:id - remove post (by id) POST
+/api/v1/posts/hide/:id - hide post (by id) POST
+/api/v1/posts/show/:id - show post (by id) POST
+/api/v1/posts/getpost/:id - get post (by id) GET
+/api/v1/posts/list - list all posts (hidden and public if admin / only public if blogger) GET
+</code>
 
-/api/v1/users/ - list users
-/api/v1/users/login - user login
-/api/v1/users/register - user registration
+Code finalizing + authentication security + post endpoints made by Igor Moscalet (see difference in commit after fork)
 
-/api/v1/posts/create - create post
-/api/v1/posts/update/:id - update post (by id)
-/api/v1/posts/remove/:id - remove post (by id)
-/api/v1/posts/hide/:id - hide post (by id)
-/api/v1/posts/show/:id - show post (by id)
-/api/v1/posts/getpost/:id - get post (by id)
-/api/v1/posts/list - list all posts (hidden and public if admin / only public if blogger)
-
-Made by Igor Moscalet
 
 
 

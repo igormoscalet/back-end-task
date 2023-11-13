@@ -80,17 +80,23 @@ function initListPostsRequestHandler(sequelizeClient: SequelizeClient): RequestH
       const { models } = sequelizeClient;
   
       try {
-        const { auth: { user: { type: userType } } } = req as unknown as { auth: RequestAuth };
+
+        const {
+            token,
+            user,
+          } = (req as any).auth as RequestAuth;
   
-        const isAdmin = userType === UserType.ADMIN;
+        const isAdmin = user.type === UserType.ADMIN;
   
         if(isAdmin){
             const posts = await models.posts.findAll();
             res.send(posts);
         }
         else{
-            const posts = await models.posts.findAll({where: {isHidden: false}});
-            res.send(posts);
+            const publicPosts = await models.posts.findAll({where: {isHidden: false}});
+            const hiddenRequestedUserPosts = await models.posts.findAll({where: {isHidden: true, authorId: user.id}});
+            const allPosts = [...publicPosts, ...hiddenRequestedUserPosts];
+            res.send(allPosts);
         }
 
         return res.end();
@@ -108,6 +114,8 @@ function initListPostsRequestHandler(sequelizeClient: SequelizeClient): RequestH
             user,
           } = (req as any).auth as RequestAuth;
         const { title, content } = req.body as CreatePostData;
+
+        console.log(user.id);
   
         await createPost({ title, content }, user.id, sequelizeClient);
   
@@ -133,7 +141,7 @@ function initListPostsRequestHandler(sequelizeClient: SequelizeClient): RequestH
     
         const { models } = sequelizeClient;
 
-        const postById = await models.posts.findOne({attributes: ["id"], where: {id: postId}}) as Post | null;
+        const postById = await models.posts.findOne({attributes: ["id", "authorId"], where: {id: postId}}) as Post | null;
         
         // Check if post with such ID exists
         if(postById){
@@ -168,7 +176,7 @@ function initListPostsRequestHandler(sequelizeClient: SequelizeClient): RequestH
     
         const { models } = sequelizeClient;
 
-        const postById = await models.posts.findOne({attributes: ["id"], where: {id: postId}}) as Post | null;
+        const postById = await models.posts.findOne({attributes: ["id", "authorId"], where: {id: postId}}) as Post | null;
         
         const isHiddenNewValue = true;
         
@@ -205,7 +213,7 @@ function initListPostsRequestHandler(sequelizeClient: SequelizeClient): RequestH
     
         const { models } = sequelizeClient;
 
-        const postById = await models.posts.findOne({attributes: ["id"], where: {id: postId}}) as Post | null;
+        const postById = await models.posts.findOne({attributes: ["id", "authorId"], where: {id: postId}}) as Post | null;
         
         const isHiddenNewValue = false;
         
@@ -242,11 +250,14 @@ function initListPostsRequestHandler(sequelizeClient: SequelizeClient): RequestH
     
         const { models } = sequelizeClient;
 
-        const postById = await models.posts.findOne({attributes: ["id"], where: {id: postId}}) as Post | null;
+        const postById = await models.posts.findOne({attributes: ["id", "authorId"], where: {id: postId}}) as Post | null;
+        console.log(postById);
         
         // Check if post with such ID exists
         if(postById){
             // Check if user owner post is the same one authorised to update OR the user is admin
+            console.log("authorID: " + postById.authorId);
+            console.log("userID: " + user.id);
             if(postById.authorId == user.id || user.type === UserType.ADMIN){
                 await models.posts.destroy({ where: {id: postId}});
             }
@@ -266,17 +277,15 @@ function initListPostsRequestHandler(sequelizeClient: SequelizeClient): RequestH
   }
 
 async function createPost(data: CreatePostData, authorId: number, sequelizeClient: SequelizeClient): Promise<void> {
-    const id = new Date().valueOf;
     const { title, content } = data;
-
-    const updatedAt = id;
-    const createdAt = id;
 
     const { models } = sequelizeClient;
 
+    console.log("CREATEPOST AUTHORID: ", authorId);
+
     const isHidden = false;
 
-    await models.posts.create({id, title, content, authorId, updatedAt, createdAt, isHidden});
+    await models.posts.create({title, content, authorId, isHidden});
   
 }
 
