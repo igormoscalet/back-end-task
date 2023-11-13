@@ -1,6 +1,6 @@
 import { Sequelize, Options } from 'sequelize';
 
-import type { UsersModel } from './repositories/types';
+import type { UsersModel, PostsModel } from './repositories/types';
 
 import { setupUsersModel } from './models';
 
@@ -31,10 +31,11 @@ function associateModels(models: SequelizeModels): void {
   }
 }
 
-type SetupSequelizeParams = Pick<Options, 'dialect' | 'host' | 'port' | 'username' | 'password' | 'database'>;
+export type SetupSequelizeParams = Pick<Options, 'dialect' | 'host' | 'port' | 'username' | 'password' | 'database'>;
 
 export interface SequelizeModels {
   [usersModelName]: UsersModel;
+  [postsModelName]: PostsModel;
 }
 
 interface ModelWithPossibleAssociations {

@@ -13,7 +13,7 @@ export function initUsersRouter(sequelizeClient: SequelizeClient): Router {
   const router = Router({ mergeParams: true });
 
   const tokenValidation = initTokenValidationRequestHandler(sequelizeClient);
-  const adminValidation = initAdminValidationRequestHandler();
+  const adminValidation = initAdminValidationRequestHandler(sequelizeClient);
 
   router.route('/')
     .get(tokenValidation, initListUsersRequestHandler(sequelizeClient))
@@ -83,7 +83,7 @@ function initLoginUserRequestHandler(sequelizeClient: SequelizeClient): RequestH
         throw new UnauthorizedError('EMAIL_OR_PASSWORD_INCORRECT');
       }
 
-      if (user.passwordHash !== hashPassword(password)) {
+      if (user.passwordHash !== await hashPassword(password)) {
         throw new UnauthorizedError('EMAIL_OR_PASSWORD_INCORRECT');
       }
 

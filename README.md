@@ -1,3 +1,22 @@
+# THE TASK IS DONE! 
+### Endpoints:
+
+/api/v1/users/ - list users
+/api/v1/users/login - user login
+/api/v1/users/register - user registration
+
+/api/v1/posts/create - create post
+/api/v1/posts/update/:id - update post (by id)
+/api/v1/posts/remove/:id - remove post (by id)
+/api/v1/posts/hide/:id - hide post (by id)
+/api/v1/posts/show/:id - show post (by id)
+/api/v1/posts/getpost/:id - get post (by id)
+/api/v1/posts/list - list all posts (hidden and public if admin / only public if blogger)
+
+Made by Igor Moscalet
+
+
+
 ![Logo](https://bend.md/images/5e8730206d541c6309354d3e_image%20(4).png)
 
 # Back-End Task

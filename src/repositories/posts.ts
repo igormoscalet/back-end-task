@@ -14,6 +14,7 @@ export class Post extends Model {
   authorId!: number;
   createdAt!: Date;
   updatedAt!: Date;
+  isHidden!: boolean;
 
   static associate(models: SequelizeModels): void {
     this.belongsTo(models.users, { foreignKey: 'authorId', as: 'author' });

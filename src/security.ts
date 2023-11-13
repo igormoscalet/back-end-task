@@ -1,24 +1,42 @@
 import { NotImplementedError } from "./errors";
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { tokenSecret } from './dbconfig'
 
 // TODO(roman): implement these
 // external libraries can be used
 // you can even ignore them and use your own preferred method
 
-export function hashPassword(password: string): string {
-  throw new NotImplementedError('PASSWORD_HASHING_NOT_IMPLEMENTED_YET');
+export async function hashPassword(password: string): Promise<string> {
+  const salt = await bcrypt.genSalt(10);
+  const passwordHash = await bcrypt.hash(password, salt);
+  return passwordHash;
 }
 
 export function generateToken(data: TokenData): string {
-  throw new NotImplementedError('TOKEN_GENERATION_NOT_IMPLEMENTED_YET');
+  let payload = { tokenData: data };
+  const token = jwt.sign(payload, tokenSecret);
+  return token;
 }
 
 export function isValidToken(token: string): boolean {
-  throw new NotImplementedError('TOKEN_VALIDATION_NOT_IMPLEMENTED_YET');
+  let verifiedUser = jwt.verify(token, tokenSecret);
+  if(!verifiedUser){
+    return false;
+  }
+  else{
+    return true;
+  }
+}
+
+type TokenDataWrapper = {
+  tokenData: TokenData
 }
 
 // NOTE(roman): assuming that `isValidToken` will be called before
 export function extraDataFromToken(token: string): TokenData {
-  throw new NotImplementedError('TOKEN_EXTRACTION_NOT_IMPLEMENTED_YET');
+  const verifiedUser = jwt.verify(token, tokenSecret) as TokenDataWrapper;
+  return verifiedUser.tokenData;
 }
 
 export interface TokenData {
