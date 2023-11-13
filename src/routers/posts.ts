@@ -114,8 +114,6 @@ function initListPostsRequestHandler(sequelizeClient: SequelizeClient): RequestH
             user,
           } = (req as any).auth as RequestAuth;
         const { title, content } = req.body as CreatePostData;
-
-        console.log(user.id);
   
         await createPost({ title, content }, user.id, sequelizeClient);
   
@@ -251,13 +249,10 @@ function initListPostsRequestHandler(sequelizeClient: SequelizeClient): RequestH
         const { models } = sequelizeClient;
 
         const postById = await models.posts.findOne({attributes: ["id", "authorId"], where: {id: postId}}) as Post | null;
-        console.log(postById);
         
         // Check if post with such ID exists
         if(postById){
             // Check if user owner post is the same one authorised to update OR the user is admin
-            console.log("authorID: " + postById.authorId);
-            console.log("userID: " + user.id);
             if(postById.authorId == user.id || user.type === UserType.ADMIN){
                 await models.posts.destroy({ where: {id: postId}});
             }
@@ -280,8 +275,6 @@ async function createPost(data: CreatePostData, authorId: number, sequelizeClien
     const { title, content } = data;
 
     const { models } = sequelizeClient;
-
-    console.log("CREATEPOST AUTHORID: ", authorId);
 
     const isHidden = false;
 
